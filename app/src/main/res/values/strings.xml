@@ -3,10 +3,10 @@
     <string name="add_event">Добавить мероприятие</string>
     <string name="name_hint">Название:</string>
     <string name="description_hint">Описание:</string>
-    <string name="date_hint">Дата:</string>
+    <string name="date_hint">Дата дд.мм.гггг:</string>
     <string name="address_hint">Адрес:</string>
     <string name="save_btn">Сохранить</string>
-    <string name="error_input_name">Неправильное имя</string>
-    <string name="error_input_date">Неправильная дата</string>
-    <string name="error_input_address">Неправильный адресс</string>
+    <string name="error_input_name">Заполните название</string>
+    <string name="error_input_date">Введите корректную дату</string>
+    <string name="error_input_address">Заполните адрес</string>
 </resources>

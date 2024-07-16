@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.eventmanager.R
 import com.example.eventmanager.databinding.ActivityMainBinding
 import javax.inject.Inject
 
@@ -40,14 +41,14 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
     }
 
     override fun onEditingFinished() {
-        Toast.makeText(this@MainActivity, "Success", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@MainActivity, "Успех", Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
     }
 
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
-            .add(fragment, "MY_TAG")
+            .add(R.id.main, fragment)
             .addToBackStack(null)
             .commit()
     }
@@ -57,11 +58,15 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
             eventListAdapter = EventListAdapter()
             adapter = eventListAdapter
             recycledViewPool.setMaxRecycledViews(
+                EventListAdapter.VIEW_TYPE_UPCOMING,
+                EventListAdapter.MAX_POOL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
                 EventListAdapter.VIEW_TYPE_VISITED,
                 EventListAdapter.MAX_POOL_SIZE
             )
             recycledViewPool.setMaxRecycledViews(
-                EventListAdapter.VIEW_TYPE_UPCOMING,
+                EventListAdapter.VIEW_TYPE_MISSED,
                 EventListAdapter.MAX_POOL_SIZE
             )
         }
@@ -84,8 +89,16 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val item = eventListAdapter.currentList[viewHolder.adapterPosition]
+                val item = eventListAdapter.currentList[viewHolder.getBindingAdapterPosition()]
                 viewModel.deleteEventItem(item)
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    // выполнить действие при свайпе влево
+                    viewModel.deleteEventItem(item)
+                } else if (direction == ItemTouchHelper.RIGHT) {
+                    // выполнить действие при свайпе вправо
+                    viewModel.changeMissedState(item)
+                }
             }
         }
         val itemTouchHelper = ItemTouchHelper(callback)
@@ -100,7 +113,7 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
 
     private fun setupLongClickListener() {
         eventListAdapter.onEventItemLongClickListener = {
-            viewModel.changeEnableState(it)
+            viewModel.changeVisitedState(it)
         }
     }
 }

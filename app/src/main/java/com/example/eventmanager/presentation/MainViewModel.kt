@@ -23,9 +23,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun changeEnableState(eventItem: EventItem) {
+    fun changeVisitedState(eventItem: EventItem) {
         viewModelScope.launch {
-            val newItem = eventItem.copy(visited = !eventItem.visited)
+            val newItem = eventItem.copy(visited = !eventItem.visited, missed = false)
+            editEventItemUseCase.editEventItem(newItem)
+        }
+    }
+
+    fun changeMissedState(eventItem: EventItem) {
+        viewModelScope.launch {
+            val newItem = eventItem.copy(missed = !eventItem.missed, visited = true)
             editEventItemUseCase.editEventItem(newItem)
         }
     }

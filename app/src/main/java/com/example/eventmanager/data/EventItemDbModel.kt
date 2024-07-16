@@ -12,5 +12,6 @@ data class EventItemDbModel(
     val date: String,
     val address: String,
     val weather: String,
-    val visited: Boolean
+    val visited: Boolean,
+    val missed: Boolean
 )

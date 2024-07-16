@@ -57,7 +57,7 @@ class EventItemViewModel @Inject constructor(
         val fieldsValid = validateInput(name, date, address)
         if (fieldsValid) {
             viewModelScope.launch {
-                val eventItem = EventItem(name, description, date, address, "",true)
+                val eventItem = EventItem(name, description, date, address, "", false,false)
                 addEventItemUseCase.addEventItem(eventItem)
                 finishWork()
             }
@@ -113,15 +113,22 @@ class EventItemViewModel @Inject constructor(
             _errorInputName.value = true
             result = false
         }
-        if (date.isBlank()) { //TODO добавить проверку формата даты
-            _errorInputName.value = true
+        if (date.isBlank() || !isValidDateFormat(date)) { //TODO добавить проверку формата даты
+            _errorInputDate.value = true
             result = false
         }
         if (address.isBlank()) { //TODO добавить проверку адреса
-            _errorInputName.value = true
+            _errorInputAddress.value = true
             result = false
         }
         return result
+    }
+
+
+    private fun isValidDateFormat(date: String): Boolean {
+        val regex = Regex("^(0[1-9]|[12][0-9]|3[01])\\.(0[1-9]|1[0-2])\\.\\d{4}\$")
+        println("isValidDateFormat ${regex.matches(date)}")
+        return regex.matches(date)
     }
 
     fun resetErrorInputName() {
