@@ -1,4 +1,4 @@
-package com.example.eventmanager.data
+package com.example.eventmanager.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -13,5 +13,6 @@ data class EventItemDbModel(
     val address: String,
     val weather: String,
     val visited: Boolean,
-    val missed: Boolean
+    val missed: Boolean,
+    val temperature: String
 )

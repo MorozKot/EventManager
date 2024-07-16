@@ -8,13 +8,15 @@ import com.example.eventmanager.domain.AddEventItemUseCase
 import com.example.eventmanager.domain.EditEventItemUseCase
 import com.example.eventmanager.domain.EventItem
 import com.example.eventmanager.domain.GetEventItemUseCase
+import com.example.eventmanager.domain.GetTemperatureUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EventItemViewModel @Inject constructor(
     private val getEventItemUseCase: GetEventItemUseCase,
     private val addEventItemUseCase: AddEventItemUseCase,
-    private val editEventItemUseCase: EditEventItemUseCase
+    private val editEventItemUseCase: EditEventItemUseCase,
+    private val getTemperatureUseCase: GetTemperatureUseCase
 ) : ViewModel() {
 
     private val _errorInputName = MutableLiveData<Boolean>()
@@ -57,7 +59,11 @@ class EventItemViewModel @Inject constructor(
         val fieldsValid = validateInput(name, date, address)
         if (fieldsValid) {
             viewModelScope.launch {
-                val eventItem = EventItem(name, description, date, address, "", false,false)
+                val listTemperature = getTemperatureUseCase.getTemperatureData("Aga,PH","2023-07-18", "2023-07-19")
+                val temperature = listTemperature[0].temp
+                val eventItem = EventItem(name, description, date, address, "", false,false,
+                    temperature.toString()
+                )
                 addEventItemUseCase.addEventItem(eventItem)
                 finishWork()
             }
