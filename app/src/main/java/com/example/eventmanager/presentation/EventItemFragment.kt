@@ -7,9 +7,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.eventmanager.R
 import com.example.eventmanager.databinding.FragmentEventItemBinding
 import com.example.eventmanager.domain.EventItem
 import javax.inject.Inject
@@ -105,50 +105,35 @@ class EventItemFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
-/*        if (!binding.etCity.text.isNullOrEmpty()) {
+        if (binding.etCity.text?.isNotBlank() == true) {
             viewModel.resetErrorInputCity()
-        }*/
-/*        binding.etCity.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputCity()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })*/
+        }
     }
 
     private fun launchEditMode() {
         viewModel.getEventItem(eventItemId)
-        binding.tilCity.hint = "Текущее место проведения"
+        binding.tilCity.hint = context?.getString(R.string.current_city)
+        binding.hintSpinner.text = context?.getString(R.string.new_city)
         binding.citiesSpinner.setSelection(0)
-        binding.hintSpinner.text = "Выберите новое место проведения"
 
         binding.saveButton.setOnClickListener {
-            println("citiesSpinner.getItemIdAtPosition1 ${binding.citiesSpinner.adapter.getItem(0).toString()}")
-            println("citiesSpinner.selectedItem ${binding.citiesSpinner.selectedItem.toString()}")
-            val newCity = if (binding.citiesSpinner.selectedItem.toString().isBlank()) {
+            val city = binding.citiesSpinner.selectedItem.toString().ifBlank {
                 binding.etCity.text?.toString()
-            } else {
-                binding.citiesSpinner.selectedItem.toString()
             }
 
             viewModel.editEventItem(
                 binding.etName.text?.toString(),
                 binding.etDescription.text?.toString(),
                 binding.etDate.text?.toString(),
-                newCity
+                city
             )
         }
     }
 
     private fun launchAddMode() {
         binding.tilCity.visibility = View.GONE
+        binding.hintSpinner.text = context?.getString(R.string.choose_city)
         binding.citiesSpinner.setSelection(1)
-        binding.hintSpinner.text = "Выберите место проведения"
 
         binding.saveButton.setOnClickListener {
             viewModel.addEventItem(

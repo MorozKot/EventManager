@@ -7,7 +7,7 @@ data class EventItem(
     val city: String,
     val visited: Boolean,
     val missed: Boolean,
-    val temperature: String = "",
+    val temperature: String,
     val image: String,
     var id: Int = UNDEFINED_ID
 ) {

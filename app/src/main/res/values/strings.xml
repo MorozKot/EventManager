@@ -12,6 +12,9 @@
     <string name="success">Мероприятие записано</string>
     <string name="no_temperature_data">Нет данных о температуре</string>
     <string name="city_hint">Место проведения</string>
+    <string name="current_city">Текущее место проведения</string>
+    <string name="new_city">Выберите новое место проведения</string>
+    <string name="choose_city">Выберите место проведения</string>
 
     <string-array name="cities">
         <item></item>

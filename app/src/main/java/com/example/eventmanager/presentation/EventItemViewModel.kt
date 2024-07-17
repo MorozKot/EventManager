@@ -9,6 +9,7 @@ import com.example.eventmanager.domain.EditEventItemUseCase
 import com.example.eventmanager.domain.EventItem
 import com.example.eventmanager.domain.GetEventItemUseCase
 import com.example.eventmanager.domain.GetTemperatureUseCase
+import com.example.eventmanager.domain.TemperatureCategory
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -63,8 +64,7 @@ class EventItemViewModel @Inject constructor(
             viewModelScope.launch {
                 val listTemperature =
                     getTemperatureUseCase.getTemperatureData(city, date, addOneDay(date))
-                val temperature =
-                    if (listTemperature.isNotEmpty()) listTemperature[0].temp else 0.0
+                val temperature = listTemperature.firstOrNull()?.temp?.toString() ?: ""
                 val eventItem = EventItem(
                     name,
                     description,
@@ -72,8 +72,8 @@ class EventItemViewModel @Inject constructor(
                     city,
                     visited = false,
                     missed = false,
-                    temperature.toString(),
-                    "https://i.imgur.com/DvpvklR.png"
+                    temperature,
+                    image = getTemperatureCategory(temperature).imageUrl
                 )
                 addEventItemUseCase.addEventItem(eventItem)
                 finishWork()
@@ -97,19 +97,29 @@ class EventItemViewModel @Inject constructor(
                 viewModelScope.launch {
                     val listTemperature =
                         getTemperatureUseCase.getTemperatureData(city, date, addOneDay(date))
-                    val temperature =
-                        if (listTemperature.isNotEmpty()) listTemperature[0].temp.toString() else 0.0
+                    val temperature = listTemperature.firstOrNull()?.temp?.toString() ?: ""
                     val eventItem = it.copy(
                         name = name,
                         description = description,
                         date = date,
                         city = city,
-                        temperature = temperature.toString()
+                        temperature = temperature,
+                        image = getTemperatureCategory(temperature).imageUrl
                     )
                     editEventItemUseCase.editEventItem(eventItem)
                     finishWork()
                 }
             }
+        }
+    }
+
+    private fun getTemperatureCategory(temperature: String?): TemperatureCategory {
+        return when {
+            temperature.isNullOrEmpty() -> TemperatureCategory.Undefined
+            (temperature.toDoubleOrNull() ?: 0.0) <= 5 -> TemperatureCategory.Cold
+            (temperature.toDoubleOrNull() ?: 0.0) in 6.0..20.0 -> TemperatureCategory.Moderate
+            (temperature.toDoubleOrNull() ?: 0.0) > 20 -> TemperatureCategory.Hot
+            else -> TemperatureCategory.Undefined
         }
     }
 
@@ -146,10 +156,10 @@ class EventItemViewModel @Inject constructor(
             _errorInputDate.value = true
             result = false
         }
-/*        if (city.isBlank()) { //TODO добавить проверку адреса
+        if (city.isBlank()) {
             _errorInputCity.value = true
             result = false
-        }*/
+        }
         return result
     }
 
