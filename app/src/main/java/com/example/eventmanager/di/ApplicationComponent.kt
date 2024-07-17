@@ -2,7 +2,7 @@ package com.example.eventmanager.di
 
 import android.app.Application
 import com.example.eventmanager.presentation.EventItemFragment
-import com.example.eventmanager.presentation.MainActivity
+import com.example.eventmanager.presentation.MainFragment
 import dagger.BindsInstance
 import dagger.Component
 
@@ -15,7 +15,7 @@ import dagger.Component
 )
 interface ApplicationComponent {
 
-    fun inject(activity: MainActivity)
+    fun inject(fragment: MainFragment)
 
     fun inject(fragment: EventItemFragment)
 

@@ -16,8 +16,9 @@
     <string name="new_city">Выберите новое место проведения</string>
     <string name="choose_city">Выберите место проведения</string>
 
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="cities">
-        <item></item>
+        <item> </item>
         <item>Aba,HU</item>
         <item>Aba,NG</item>
         <item>Abadan,TM</item>

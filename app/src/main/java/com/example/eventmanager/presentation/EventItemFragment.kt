@@ -7,18 +7,23 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.eventmanager.R
 import com.example.eventmanager.databinding.FragmentEventItemBinding
 import com.example.eventmanager.domain.EventItem
+import com.example.eventmanager.presentation.MainFragment.Companion.EVENT_ITEM_ID
+import com.example.eventmanager.presentation.MainFragment.Companion.MODE_ADD
+import com.example.eventmanager.presentation.MainFragment.Companion.MODE_EDIT
+import com.example.eventmanager.presentation.MainFragment.Companion.SCREEN_MODE
 import javax.inject.Inject
 
 
 class EventItemFragment : Fragment() {
 
     private lateinit var viewModel: EventItemViewModel
-    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private var _binding: FragmentEventItemBinding? = null
     private val binding: FragmentEventItemBinding
@@ -38,11 +43,6 @@ class EventItemFragment : Fragment() {
         component.inject(this)
 
         super.onAttach(context)
-        if (context is OnEditingFinishedListener) {
-            onEditingFinishedListener = context
-        } else {
-            throw RuntimeException("Activity must implement OnEditingFinishedListener")
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +71,8 @@ class EventItemFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            onEditingFinishedListener.onEditingFinished()
+            Toast.makeText(requireContext(), R.string.success, Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
     }
 
@@ -163,34 +164,8 @@ class EventItemFragment : Fragment() {
         }
     }
 
-    interface OnEditingFinishedListener {
-
-        fun onEditingFinished()
-    }
-
     companion object {
 
-        private const val SCREEN_MODE = "extra_mode"
-        private const val EVENT_ITEM_ID = "extra_event_item_id"
-        private const val MODE_EDIT = "mode_edit"
-        private const val MODE_ADD = "mode_add"
         private const val MODE_UNKNOWN = ""
-
-        fun newInstanceAddItem(): EventItemFragment {
-            return EventItemFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_ADD)
-                }
-            }
-        }
-
-        fun newInstanceEditItem(eventItemId: Int): EventItemFragment {
-            return EventItemFragment().apply {
-                arguments = Bundle().apply {
-                    putString(SCREEN_MODE, MODE_EDIT)
-                    putInt(EVENT_ITEM_ID, eventItemId)
-                }
-            }
-        }
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_component"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.eventmanager.presentation.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_eventItemFragment"
+            app:destination="@id/eventItemFragment">
+            <argument
+                android:name="SCREEN_MODE"
+                app:argType="string" />
+            <argument
+                android:name="EVENT_ITEM_ID"
+                app:argType="integer"
+                android:defaultValue="-1" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/eventItemFragment"
+        android:name="com.example.eventmanager.presentation.EventItemFragment"
+        android:label="EventItemFragment" />
+
+</navigation>
