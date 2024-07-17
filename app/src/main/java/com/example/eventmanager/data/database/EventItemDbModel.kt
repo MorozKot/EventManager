@@ -10,9 +10,9 @@ data class EventItemDbModel(
     val name: String,
     val description: String,
     val date: String,
-    val address: String,
-    val weather: String,
+    val city: String,
     val visited: Boolean,
     val missed: Boolean,
-    val temperature: String
+    val temperature: String,
+    val image: String
 )

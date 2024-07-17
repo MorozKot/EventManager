@@ -1,6 +1,7 @@
 package com.example.eventmanager.presentation
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
     }
 
     override fun onEditingFinished() {
-        Toast.makeText(this@MainActivity, "Успех", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this@MainActivity, R.string.success, Toast.LENGTH_SHORT).show()
         supportFragmentManager.popBackStack()
     }
 
@@ -93,10 +94,8 @@ class MainActivity : AppCompatActivity(), EventItemFragment.OnEditingFinishedLis
                 viewModel.deleteEventItem(item)
 
                 if (direction == ItemTouchHelper.LEFT) {
-                    // выполнить действие при свайпе влево
                     viewModel.deleteEventItem(item)
                 } else if (direction == ItemTouchHelper.RIGHT) {
-                    // выполнить действие при свайпе вправо
                     viewModel.changeMissedState(item)
                 }
             }

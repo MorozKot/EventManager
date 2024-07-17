@@ -48,6 +48,7 @@ class EventListAdapter : ListAdapter<EventItem, EventItemViewHolder>(EventItemDi
             }
             is ItemEventUpcomingBinding -> {
                 binding.eventItem = eventItem
+                viewHolder.bind(eventItem.image)
             }
             is ItemEventMissedBinding -> {
                 binding.eventItem = eventItem

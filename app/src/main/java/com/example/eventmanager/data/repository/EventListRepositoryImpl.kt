@@ -48,7 +48,7 @@ class EventListRepositoryImpl @Inject constructor(
         return try {
             val response = apiService.getWeather(city, startDate, endDate)
             Log.d("WeatherRepository", "API Response: $response")
-            response.data?.map { TemperatureData(temp = it.temp) } ?: emptyList()
+            mapper.mapWeatherDtoToTemperatureData(response)
         } catch (e: Exception) {
             Log.e("WeatherRepository", "Error fetching weather data", e)
             emptyList()

@@ -13,11 +13,11 @@ class EventListMapper @Inject constructor() {
         name = eventItem.name,
         description = eventItem.description,
         date = eventItem.date,
-        address = eventItem.address,
-        weather = eventItem.weather,
+        city = eventItem.city,
         visited = eventItem.visited,
         missed = eventItem.missed,
-        temperature = eventItem.temperature
+        temperature = eventItem.temperature,
+        image = eventItem.image
     )
 
     fun mapDbModelToEntity(eventItemDbModel: EventItemDbModel) = EventItem(
@@ -25,11 +25,11 @@ class EventListMapper @Inject constructor() {
         name = eventItemDbModel.name,
         description = eventItemDbModel.description,
         date = eventItemDbModel.date,
-        address = eventItemDbModel.address,
-        weather = eventItemDbModel.weather,
+        city = eventItemDbModel.city,
         visited = eventItemDbModel.visited,
         missed = eventItemDbModel.missed,
-        temperature = eventItemDbModel.temperature
+        temperature = eventItemDbModel.temperature,
+        image = eventItemDbModel.image
     )
 
     fun mapListDbModelToListEntity(list: List<EventItemDbModel>) = list.map {

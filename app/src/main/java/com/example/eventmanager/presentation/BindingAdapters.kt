@@ -24,10 +24,10 @@ fun bindErrorInputDate(textInputLayout: TextInputLayout, isError: Boolean) {
     textInputLayout.error = message
 }
 
-@BindingAdapter("errorInputAddress")
-fun bindErrorInputAddress(textInputLayout: TextInputLayout, isError: Boolean) {
+@BindingAdapter("errorInputCity")
+fun bindErrorInputCity(textInputLayout: TextInputLayout, isError: Boolean) {
     val message = if (isError) {
-        textInputLayout.context.getString(R.string.error_input_address)
+        textInputLayout.context.getString(R.string.error_input_city)
     } else {
         null
     }

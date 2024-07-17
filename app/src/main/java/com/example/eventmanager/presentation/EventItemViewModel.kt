@@ -10,6 +10,8 @@ import com.example.eventmanager.domain.EventItem
 import com.example.eventmanager.domain.GetEventItemUseCase
 import com.example.eventmanager.domain.GetTemperatureUseCase
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class EventItemViewModel @Inject constructor(
@@ -27,9 +29,9 @@ class EventItemViewModel @Inject constructor(
     val errorInputDate: LiveData<Boolean>
         get() = _errorInputDate
 
-    private val _errorInputAddress = MutableLiveData<Boolean>()
-    val errorInputAddress: LiveData<Boolean>
-        get() = _errorInputAddress
+    private val _errorInputCity = MutableLiveData<Boolean>()
+    val errorInputCity: LiveData<Boolean>
+        get() = _errorInputCity
 
     private val _eventItem = MutableLiveData<EventItem>()
     val eventItem: LiveData<EventItem>
@@ -50,19 +52,28 @@ class EventItemViewModel @Inject constructor(
         inputName: String?,
         inputDescription: String?,
         inputDate: String?,
-        inputAddress: String?
+        inputCity: String?
     ) {
         val name = parseName(inputName)
         val description = parseDescription(inputDescription)
         val date = parseDate(inputDate)
-        val address = parseAddress(inputAddress)
-        val fieldsValid = validateInput(name, date, address)
+        val city = parseCity(inputCity)
+        val fieldsValid = validateInput(name, date, city)
         if (fieldsValid) {
             viewModelScope.launch {
-                val listTemperature = getTemperatureUseCase.getTemperatureData("Aga,PH","2023-07-18", "2023-07-19")
-                val temperature = listTemperature[0].temp
-                val eventItem = EventItem(name, description, date, address, "", false,false,
-                    temperature.toString()
+                val listTemperature =
+                    getTemperatureUseCase.getTemperatureData(city, date, addOneDay(date))
+                val temperature =
+                    if (listTemperature.isNotEmpty()) listTemperature[0].temp else 0.0
+                val eventItem = EventItem(
+                    name,
+                    description,
+                    date,
+                    city,
+                    visited = false,
+                    missed = false,
+                    temperature.toString(),
+                    "https://i.imgur.com/DvpvklR.png"
                 )
                 addEventItemUseCase.addEventItem(eventItem)
                 finishWork()
@@ -74,23 +85,28 @@ class EventItemViewModel @Inject constructor(
         inputName: String?,
         inputDescription: String?,
         inputDate: String?,
-        inputAddress: String?
+        inputCity: String?
     ) {
         val name = parseName(inputName)
         val description = parseDescription(inputDescription)
         val date = parseDate(inputDate)
-        val address = parseAddress(inputAddress)
-        val fieldsValid = validateInput(name, date, address)
+        val city = parseCity(inputCity)
+        val fieldsValid = validateInput(name, date, city)
         if (fieldsValid) {
             _eventItem.value?.let {
                 viewModelScope.launch {
-                    val item = it.copy(
+                    val listTemperature =
+                        getTemperatureUseCase.getTemperatureData(city, date, addOneDay(date))
+                    val temperature =
+                        if (listTemperature.isNotEmpty()) listTemperature[0].temp.toString() else 0.0
+                    val eventItem = it.copy(
                         name = name,
                         description = description,
                         date = date,
-                        address = address
+                        city = city,
+                        temperature = temperature.toString()
                     )
-                    editEventItemUseCase.editEventItem(item)
+                    editEventItemUseCase.editEventItem(eventItem)
                     finishWork()
                 }
             }
@@ -109,31 +125,37 @@ class EventItemViewModel @Inject constructor(
         return inputDate?.trim() ?: ""
     }
 
-    private fun parseAddress(inputAddress: String?): String {
-        return inputAddress?.trim() ?: ""
+    private fun parseCity(inputCity: String?): String {
+        return inputCity?.trim() ?: ""
     }
 
-    private fun validateInput(name: String, date: String, address: String): Boolean {
+    private fun addOneDay(date: String): String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val parsedDate = LocalDate.parse(date, formatter)
+        val nextDay = parsedDate.plusDays(1)
+        return nextDay.format(formatter)
+    }
+
+    private fun validateInput(name: String, date: String, city: String): Boolean {
         var result = true
         if (name.isBlank()) {
             _errorInputName.value = true
             result = false
         }
-        if (date.isBlank() || !isValidDateFormat(date)) { //TODO добавить проверку формата даты
+        if (date.isBlank() || !isValidDateFormat(date)) {
             _errorInputDate.value = true
             result = false
         }
-        if (address.isBlank()) { //TODO добавить проверку адреса
-            _errorInputAddress.value = true
+/*        if (city.isBlank()) { //TODO добавить проверку адреса
+            _errorInputCity.value = true
             result = false
-        }
+        }*/
         return result
     }
 
 
     private fun isValidDateFormat(date: String): Boolean {
-        val regex = Regex("^(0[1-9]|[12][0-9]|3[01])\\.(0[1-9]|1[0-2])\\.\\d{4}\$")
-        println("isValidDateFormat ${regex.matches(date)}")
+        val regex = Regex("^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\$")
         return regex.matches(date)
     }
 
@@ -145,8 +167,8 @@ class EventItemViewModel @Inject constructor(
         _errorInputDate.value = false
     }
 
-    fun resetErrorInputAddress() {
-        _errorInputAddress.value = false
+    fun resetErrorInputCity() {
+        _errorInputCity.value = false
     }
 
     private fun finishWork() {
